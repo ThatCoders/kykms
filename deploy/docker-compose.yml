@@ -1,4 +1,4 @@
-version: '3'
+name: kykms
 services:
   kykms-mysql-comm:
     environment:
@@ -7,24 +7,18 @@ services:
       TZ: Asia/Shanghai
     restart: always
     container_name: kykms-mysql-comm
-    image: registry.cn-guangzhou.aliyuncs.com/kyxxjs/kykms-mysql:comm
+    image: sgccr.ccs.tencentyun.com/china/kykms:mysql
     volumes:
       - ./docker/mysql/conf/mysqld.cnf:/etc/mysql/conf.d/source/mysqld.cnf
       - ./docker/mysql/data:/var/lib/mysql
       - ./docker/mysql/log:/var/log/mysql
-    command:
-      --character-set-server=utf8mb4
-      --collation-server=utf8mb4_general_ci
-      --explicit_defaults_for_timestamp=true
-      --lower_case_table_names=1
-      --max_allowed_packet=128M
     ports:
       - 3306:3306
     networks:
       kykms_network:
 
   kykms-redis-comm:
-    image: registry.cn-guangzhou.aliyuncs.com/kyxxjs/kykms-redis:6.0
+    image: sgccr.ccs.tencentyun.com/china/kykms:redis
     ports:
       - 6379:6379
     restart: always
@@ -36,7 +30,7 @@ services:
       kykms_network:
 
   kykms-ES-comm:
-    image: registry.cn-guangzhou.aliyuncs.com/kyxxjs/kykms-es:7.6.1
+    image: sgccr.ccs.tencentyun.com/china/kykms:es
     restart: always
     container_name: kykms-ES-comm
     volumes:
@@ -53,7 +47,7 @@ services:
       kykms_network:
 
   kykms-comm:
-    image: registry.cn-guangzhou.aliyuncs.com/kyxxjs/kykms:comm
+    image: sgccr.ccs.tencentyun.com/china/kykms:api
     container_name: kykms-comm
     environment:
       - TZ=Asia/Shanghai
@@ -67,10 +61,10 @@ services:
     networks:
       kykms_network:
     restart: always
-    command: java -jar ./jeecg-boot-module-system-2.4.5.jar ./catalina.out 2>&1 &
+    command: java -jar ./app.jar ./catalina.out 2>&1 &
 
   kykms-nginx-comm:
-    image: registry.cn-guangzhou.aliyuncs.com/kyxxjs/kykms-nginx:comm
+    image: sgccr.ccs.tencentyun.com/china/kykms:web
     depends_on:
       - kykms-comm
     container_name: kykms-nginx-comm
